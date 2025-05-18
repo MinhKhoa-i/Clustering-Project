@@ -1,0 +1,17 @@
+# Bỏ qua các file tạm của Python
+__pycache__/
+*.pyc
+
+# Bỏ qua các file checkpoint của Jupyter Notebook
+.ipynb_checkpoints/
+
+# Bỏ qua các file Jupyter Notebook (nếu không cần commit)
+*.ipynb
+
+# Bỏ qua các file dữ liệu trung gian
+data/processed_mall_customers.csv
+data/mall_customers_pca.csv
+
+# Bỏ qua các file nhị phân lớn hoặc tạm thời khác (nếu có)
+*.log
+*.tmp
