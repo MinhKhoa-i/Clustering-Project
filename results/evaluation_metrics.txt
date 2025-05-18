@@ -1,10 +1,10 @@
-K-Means Custom:
-  Silhouette Score: 0.4166
-  Davies-Bouldin Index: 0.8746
-
 K-Means Library:
   Silhouette Score: 0.4085
   Davies-Bouldin Index: 0.8890
+
+K-Means Custom:
+  Silhouette Score: 0.4166
+  Davies-Bouldin Index: 0.8746
 
 DBSCAN:
   Silhouette Score: 0.1845
