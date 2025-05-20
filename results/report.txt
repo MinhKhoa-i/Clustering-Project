@@ -1,0 +1,29 @@
+Clustering Project Report
+=======================
+Optimal k for K-Means: 5
+DBSCAN Parameters: eps=0.5, min_samples=5
+Evaluation Metrics:
+K-Means Library:
+  Silhouette Score: 0.4085
+  Davies-Bouldin Index: 0.8890
+  Calinski-Harabasz Index: 123.4187
+  MSE: 0.8495
+  RMSE: 0.9217
+K-Means Custom:
+  Silhouette Score: 0.4166
+  Davies-Bouldin Index: 0.8746
+  Calinski-Harabasz Index: 125.1009
+  MSE: 0.8412
+  RMSE: 0.9172
+DBSCAN:
+  Silhouette Score: 0.1845
+  Davies-Bouldin Index: 1.7569
+  Calinski-Harabasz Index: 34.0705
+
+Cluster Summary:
+   Cluster        Age  Annual Income (k$)  Spending Score (1-100)
+0        0  55.275862           47.620690               41.706897
+1        1  32.875000           86.100000               81.525000
+2        2  25.769231           26.115385               74.846154
+3        3  26.733333           54.311111               40.911111
+4        4  44.387097           89.774194               18.483871
