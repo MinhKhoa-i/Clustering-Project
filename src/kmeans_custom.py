@@ -2,6 +2,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import sys
 
 class KMeansCustom:
     """Lớp triển khai K-Means tự viết."""
@@ -92,7 +93,7 @@ class KMeansCustom:
         
         plt.figure(figsize=(8, 6))
         plt.plot(range(1, max_k + 1), inertias, marker='o')
-        plt.title("Elbow Method forYA Optimal k (Custom)")
+        plt.title("Elbow Method for Optimal k (Custom)")
         plt.xlabel("Number of Clusters (k)")
         plt.ylabel("Inertia")
         plt.savefig(save_path)
@@ -100,7 +101,8 @@ class KMeansCustom:
         print(f"Biểu đồ Elbow đã lưu tại: {save_path}")
 
 if __name__ == "__main__":
-    data = pd.read_csv("data/processed_mall_customers.csv")
+    file_path = sys.argv[1] if len(sys.argv) > 1 else "data/processed_mall_customers.csv"
+    data = pd.read_csv(file_path)
     X = data.values
     
     kmeans = KMeansCustom(k=5, random_state=42)

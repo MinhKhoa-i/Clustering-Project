@@ -22,52 +22,70 @@ def run_clustering():
     # Tiền xử lý dữ liệu
     preprocessor = DataPreprocessor(use_pca=True, n_components=2)
     preprocessor.preprocess(
-        file_path="C:/Khoa/Y3_HK2/MachineLearning/Clustering_Project/data/Mall_Customers.csv",
-        output_path_scaled="C:/Khoa/Y3_HK2/MachineLearning/Clustering_Project/data/processed_mall_customers.csv",
-        output_path_pca="C:/Khoa/Y3_HK2/MachineLearning/Clustering_Project/data/mall_customers_pca.csv"
+        file_path="data/Mall_Customers.csv",
+        output_path_scaled="data/processed_mall_customers.csv",
+        output_path_pca="data/mall_customers_pca.csv"
     )
     
     # Tải dữ liệu
     X = preprocessor.X_scaled_df.values
-    X_pca = preprocessor.X_pca_df.values
     data_original = pd.read_csv(
-        "C:/Khoa/Y3_HK2/MachineLearning/Clustering_Project/data/Mall_Customers.csv"
+        "data/Mall_Customers.csv"
     )[["Age", "Annual Income (k$)", "Spending Score (1-100)"]]
-    
+
+    # Áp dụng PCA ngay sau khi scale để dữ liệu visualization là 2D
+    preprocessor_pca = DataPreprocessor(use_pca=True, n_components=2)
+    X_scaled_df, X_pca_df = preprocessor_pca.preprocess(
+        file_path="data/Mall_Customers.csv", # Sử dụng lại file gốc để tiền xử lý lại với PCA
+        output_path_scaled="data/processed_mall_customers.csv", # Giữ tên file cũ nếu cần
+        output_path_pca="data/mall_customers_pca.csv"
+    )
+    X_pca = X_pca_df.values # Dữ liệu 2D cho visualization
+
     evaluator = ClusterEvaluator()
     visualizer = ClusterVisualizer()
     
     # K-Means Thư viện
     kmeans_lib = KMeansLibrary(k=5, random_state=42)
+    # Fit trên dữ liệu gốc X (đã scale) để tính centroid trong không gian gốc
     labels_kmeans_lib, centroids_kmeans_lib = kmeans_lib.fit(X)
-    kmeans_lib.plot_elbow_method(X, max_k=10)
-    evaluator.evaluate(X, labels_kmeans_lib, centroids=centroids_kmeans_lib, method_name="K-Means Library")
+    # Chiếu centroids xuống 2D cho visualization
+    centroids_lib_pca = preprocessor_pca.pca.transform(centroids_kmeans_lib)
+
+    kmeans_lib.plot_elbow_method(X, max_k=10) # Elbow method dùng dữ liệu gốc
+    evaluator.evaluate(X, labels_kmeans_lib, centroids=centroids_kmeans_lib, method_name="K-Means Library") # Đánh giá dùng dữ liệu gốc và centroids gốc
     visualizer.plot_clusters(
-        X_pca, labels_kmeans_lib, centroids_kmeans_lib, 
+        X_pca, labels_kmeans_lib, centroids_lib_pca, # Plot dùng X_pca (2D) và centroids_lib_pca (2D)
         "K-Means Library", "results/kmeans_library_plot.png"
     )
     analyze_clusters(data_original, labels_kmeans_lib)
     
     # K-Means Tự viết
     kmeans_custom = KMeansCustom(k=5, random_state=42)
+    # Fit trên dữ liệu gốc X (đã scale)
     labels_kmeans_custom, centroids_kmeans_custom = kmeans_custom.fit(X)
-    kmeans_custom.plot_elbow_method(X, max_k=10)
-    evaluator.evaluate(X, labels_kmeans_custom, centroids=centroids_kmeans_custom, method_name="K-Means Custom")
+    # Chiếu centroids xuống 2D cho visualization
+    centroids_custom_pca = preprocessor_pca.pca.transform(centroids_kmeans_custom)
+
+    kmeans_custom.plot_elbow_method(X, max_k=10) # Elbow method dùng dữ liệu gốc
+    evaluator.evaluate(X, labels_kmeans_custom, centroids=centroids_kmeans_custom, method_name="K-Means Custom") # Đánh giá dùng dữ liệu gốc và centroids gốc
     visualizer.plot_clusters(
-        X_pca, labels_kmeans_custom, centroids_kmeans_custom, 
+        X_pca, labels_kmeans_custom, centroids_custom_pca, # Plot dùng X_pca (2D) và centroids_custom_pca (2D)
         "K-Means Custom", "results/kmeans_custom_plot.png"
     )
     
     # DBSCAN
     dbscan = DBSCANLibrary(eps=0.5, min_samples=5)
+    # Fit trên dữ liệu gốc X (đã scale)
     labels_dbscan = dbscan.fit(X)
     num_clusters = len(np.unique(labels_dbscan)) - (1 if -1 in labels_dbscan else 0)
     num_noise_points = sum(labels_dbscan == -1)
     print(f"DBSCAN: Số cụm = {num_clusters}, Số điểm nhiễu = {num_noise_points} / {len(labels_dbscan)}")
-    dbscan.plot_k_distance(X, k=5)
-    evaluator.evaluate(X, labels_dbscan, centroids=None, method_name="DBSCAN")
+
+    dbscan.plot_k_distance(X, k=5) # k-distance dùng dữ liệu gốc
+    evaluator.evaluate(X, labels_dbscan, centroids=None, method_name="DBSCAN") # Đánh giá dùng dữ liệu gốc, DBSCAN không có centroid
     visualizer.plot_clusters(
-        X_pca, labels_dbscan, None, "DBSCAN", "results/dbscan_plot.png"
+        X_pca, labels_dbscan, None, "DBSCAN", "results/dbscan_plot.png" # Plot dùng X_pca (2D), DBSCAN không có centroid 2D
     )
     
     # Lưu kết quả đánh giá

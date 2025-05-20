@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
+import sys
 
 class DBSCANLibrary:
     """Lớp triển khai DBSCAN sử dụng scikit-learn."""
@@ -58,7 +59,8 @@ class DBSCANLibrary:
         print(f"k-Distance Plot đã lưu tại: {save_path}")
 
 if __name__ == "__main__":
-    data = pd.read_csv("data/processed_mall_customers.csv")
+    file_path = sys.argv[1] if len(sys.argv) > 1 else "data/processed_mall_customers.csv"
+    data = pd.read_csv(file_path)
     X = data.values
     
     dbscan = DBSCANLibrary(eps=0.5, min_samples=5)

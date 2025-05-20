@@ -2,6 +2,7 @@
 import pandas as pd
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
+import sys
 
 class DataPreprocessor:
     """Lớp tiền xử lý dữ liệu cho phân cụm."""
@@ -74,9 +75,13 @@ class DataPreprocessor:
         return pd.read_csv(file_path)
 
 if __name__ == "__main__":
+    # Cho phép truyền file_path, output_path_scaled, output_path_pca qua sys.argv
+    file_path = sys.argv[1] if len(sys.argv) > 1 else "data/Mall_Customers.csv"
+    output_path_scaled = sys.argv[2] if len(sys.argv) > 2 else "data/processed_mall_customers.csv"
+    output_path_pca = sys.argv[3] if len(sys.argv) > 3 else "data/mall_customers_pca.csv"
     preprocessor = DataPreprocessor(use_pca=True, n_components=2)
     preprocessor.preprocess(
-        file_path="data/Mall_Customers.csv",
-        output_path_scaled="data/processed_mall_customers.csv",
-        output_path_pca="data/mall_customers_pca.csv"
+        file_path=file_path,
+        output_path_scaled=output_path_scaled,
+        output_path_pca=output_path_pca
     )
