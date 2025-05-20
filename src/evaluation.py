@@ -11,50 +11,36 @@ class ClusterEvaluator:
     
     def evaluate(self, X, labels, centroids=None, method_name=""):
         """
-        Đánh giá phân cụm bằng nhiều độ đo.
+        Đánh giá kết quả phân cụm.
         
         Args:
-            X (np.ndarray): Dữ liệu đầu vào [n_samples, n_features].
+            X (np.ndarray): Dữ liệu đầu vào.
             labels (np.ndarray): Nhãn cụm.
-            centroids (np.ndarray, optional): Tọa độ tâm cụm (dùng cho K-Means).
-            method_name (str): Tên phương pháp.
+            centroids (np.ndarray, optional): Tâm cụm (cho K-Means).
+            method_name (str): Tên phương pháp phân cụm.
         
         Returns:
-            dict: Kết quả đánh giá.
+            dict: Các chỉ số đánh giá.
         """
-        result = {}
-        n_clusters = len(np.unique(labels)) - (1 if -1 in labels else 0)
+        metrics = {}
         
-        # Chỉ tính các độ đo nếu có ít nhất 2 cụm (trừ nhiễu trong DBSCAN)
-        if n_clusters > 1:
-            # Silhouette Score
-            silhouette = silhouette_score(X, labels)
-            result["Silhouette Score"] = silhouette
-            
-            # Davies-Bouldin Index
-            db_index = davies_bouldin_score(X, labels)
-            result["Davies-Bouldin Index"] = db_index
-            
-            # Calinski-Harabasz Index
-            ch_index = calinski_harabasz_score(X, labels)
-            result["Calinski-Harabasz Index"] = ch_index
-            
-            print(f"{method_name} - Silhouette Score: {silhouette:.4f}, "
-                  f"Davies-Bouldin Index: {db_index:.4f}, "
-                  f"Calinski-Harabasz Index: {ch_index:.4f}")
-            
-            # MSE và RMSE (chỉ tính cho K-Means, khi có centroids)
-            if centroids is not None:
-                mse = self.compute_mse(X, labels, centroids)
-                rmse = np.sqrt(mse)
-                result["MSE"] = mse
-                result["RMSE"] = rmse
-                print(f"{method_name} - MSE: {mse:.4f}, RMSE: {rmse:.4f}")
-        else:
-            print(f"{method_name} - Không đủ cụm để đánh giá (n_clusters={n_clusters})")
+        # Silhouette Score
+        metrics["Silhouette Score"] = silhouette_score(X, labels)
         
-        self.results[method_name] = result
-        return result
+        # Davies-Bouldin Index
+        metrics["Davies-Bouldin Index"] = davies_bouldin_score(X, labels)
+        
+        # Calinski-Harabasz Index
+        metrics["Calinski-Harabasz Index"] = calinski_harabasz_score(X, labels)
+        
+        # MSE và RMSE (chỉ cho K-Means)
+        if centroids is not None:
+            mse = self.compute_mse(X, labels, centroids)
+            metrics["MSE"] = mse
+            metrics["RMSE"] = np.sqrt(mse)
+        
+        self.results[method_name] = metrics
+        return metrics
     
     def compute_mse(self, X, labels, centroids):
         """
