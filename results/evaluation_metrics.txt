@@ -1,12 +1,19 @@
 K-Means Library:
   Silhouette Score: 0.4085
   Davies-Bouldin Index: 0.8890
+  Calinski-Harabasz Index: 123.4187
+  MSE: 0.8495
+  RMSE: 0.9217
 
 K-Means Custom:
   Silhouette Score: 0.4166
   Davies-Bouldin Index: 0.8746
+  Calinski-Harabasz Index: 125.1009
+  MSE: 0.8412
+  RMSE: 0.9172
 
 DBSCAN:
   Silhouette Score: 0.1845
   Davies-Bouldin Index: 1.7569
+  Calinski-Harabasz Index: 34.0705
 
