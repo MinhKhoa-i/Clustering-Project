@@ -93,7 +93,7 @@ class KMeansCustom:
         
         plt.figure(figsize=(8, 6))
         plt.plot(range(1, max_k + 1), inertias, marker='o')
-        plt.title("Elbow Method forYA Optimal k (Custom)")
+        plt.title("Elbow Method for Optimal k (Custom)")
         plt.xlabel("Number of Clusters (k)")
         plt.ylabel("Inertia")
         plt.savefig(save_path)
