@@ -6,17 +6,19 @@ import matplotlib.pyplot as plt
 class KMeansCustom:
     """Lớp triển khai K-Means tự viết."""
     
-    def __init__(self, k, max_iters=100, random_state=None):
+    def __init__(self, k, max_iters=100, tol=1e-4, random_state=None):
         """
         Khởi tạo K-Means tự viết.
         
         Args:
             k (int): Số lượng cụm.
             max_iters (int): Số vòng lặp tối đa.
+            tol (float): Ngưỡng hội tụ (tolerance) để dừng vòng lặp.
             random_state (int): Seed để tái lập kết quả.
         """
         self.k = k
         self.max_iters = max_iters
+        self.tol = tol  # Thêm tham số tol
         self.random_state = random_state
         self.labels_ = None
         self.centroids_ = None
@@ -49,17 +51,18 @@ class KMeansCustom:
                 else:
                     new_centroids[i] = self.centroids_[i]
             
-            if np.all(self.centroids_ == new_centroids):
-                break
-            
+            # Sử dụng tol để kiểm tra điều kiện dừng thay vì so sánh trực tiếp
+            shift = np.linalg.norm(new_centroids - self.centroids_, axis=1).max()
             self.centroids_ = new_centroids
+            if shift < self.tol:
+                break
         
         return self.labels_, self.centroids_
     
     def compute_inertia(self, X):
         """
         Tính inertia.
-        
+        tổng bình phương khoảng cách từ mỗi điểm dữ liệu đến tâm cụm gần nhất (centroid) của nó.
         Args:
             X (np.ndarray): Dữ liệu đầu vào.
         
@@ -85,14 +88,14 @@ class KMeansCustom:
         """
         inertias = []
         for k in range(1, max_k + 1):
-            model = KMeansCustom(k, self.max_iters, self.random_state)
+            model = KMeansCustom(k, self.max_iters, self.tol, self.random_state)
             model.fit(X)
             inertia = model.compute_inertia(X)
             inertias.append(inertia)
         
         plt.figure(figsize=(8, 6))
         plt.plot(range(1, max_k + 1), inertias, marker='o')
-        plt.title("Elbow Method forYA Optimal k (Custom)")
+        plt.title("Elbow Method for Optimal k (Custom)")
         plt.xlabel("Number of Clusters (k)")
         plt.ylabel("Inertia")
         plt.savefig(save_path)

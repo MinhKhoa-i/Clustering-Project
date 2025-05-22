@@ -37,6 +37,12 @@ def run_clustering():
     evaluator = ClusterEvaluator()
     visualizer = ClusterVisualizer()
     
+    # Danh sách các độ đo để vẽ biểu đồ (chỉ lấy Silhouette Score và Davies-Bouldin Index)
+    metrics_to_compare = [
+        "Silhouette Score",
+        "Davies-Bouldin Index"
+    ]
+    
     # K-Means Thư viện
     kmeans_lib = KMeansLibrary(k=5, random_state=42)
     labels_kmeans_lib, centroids_kmeans_lib = kmeans_lib.fit(X)
@@ -49,7 +55,7 @@ def run_clustering():
     analyze_clusters(data_original, labels_kmeans_lib)
     
     # K-Means Tự viết
-    kmeans_custom = KMeansCustom(k=5, random_state=42)
+    kmeans_custom = KMeansCustom(k=5, max_iters=300, tol=1e-4, random_state=42)
     labels_kmeans_custom, centroids_kmeans_custom = kmeans_custom.fit(X)
     kmeans_custom.plot_elbow_method(X, max_k=10)
     evaluator.evaluate(X, labels_kmeans_custom, centroids=centroids_kmeans_custom, method_name="K-Means Custom")
@@ -72,6 +78,15 @@ def run_clustering():
     
     # Lưu kết quả đánh giá
     evaluator.save_results()
+    
+    # Vẽ biểu đồ so sánh các độ đo đánh giá (chỉ với Silhouette Score và Davies-Bouldin Index)
+    visualizer.plot_evaluation_comparison(evaluator.results, metrics_to_compare)
+    
+    # Vẽ sơ đồ đánh giá riêng cho từng mô hình
+    for method in evaluator.results:
+        values = [evaluator.results[method].get(metric, None) for metric in metrics_to_compare]
+        save_path = f"results/{method.lower().replace(' ', '_')}_evaluation_diagram.png"
+        visualizer.plot_model_evaluation_diagram(method, metrics_to_compare, values, save_path)
     
     # Tạo báo cáo
     with open("results/report.txt", "w") as f:
